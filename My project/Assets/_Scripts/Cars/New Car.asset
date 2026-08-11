@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b148fde3a6832914493561bf6ebde115, type: 3}
   m_Name: New Car
   m_EditorClassIdentifier: 
-  speed: 2000
+  speed: 1000
   brakeForce: 800
   angle: 45
