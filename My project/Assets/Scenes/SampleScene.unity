@@ -208,8 +208,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.015036412, y: 0.9610788, z: -0.05339474, w: -0.27064827}
-  m_LocalPosition: {x: 1.3842418, y: 1.1244819, z: 3.0779762}
+  m_LocalRotation: {x: 0.23332092, y: -0.008166314, z: 0.0019596594, w: 0.97236353}
+  m_LocalPosition: {x: 0.7750948, y: 5.308526, z: -9.038093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -597,8 +597,8 @@ Transform:
   m_GameObject: {fileID: 905250000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1.6104, y: 0, z: 0}
+  m_LocalScale: {x: 2.4829528, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -925,8 +925,10 @@ GameObject:
   - component: {fileID: 1576420523056499966}
   - component: {fileID: 3604117017138559030}
   - component: {fileID: 3604117017138559029}
+  - component: {fileID: 3604117017138559032}
+  - component: {fileID: 3604117017138559031}
   m_Layer: 0
-  m_Name: kart-oobi
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1188,6 +1190,44 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3604117017138559031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071978126747413803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e8b84875ae2354cbc48c24ed50ed93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementVector: {x: 0, y: 0}
+  isBraking: 0
+--- !u!114 &3604117017138559032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071978126747413803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  car: {fileID: 11400000, guid: 495ad620fff62ce4dbbfde8e1dd4e416, type: 2}
+  speed: 0
+  _wheelCollider:
+  - {fileID: 998395287}
+  - {fileID: 561616103}
+  - {fileID: 1093805007}
+  - {fileID: 1070065976}
+  _wheelTransform:
+  - {fileID: 8551694762708673232}
+  - {fileID: 8413037197049283112}
+  - {fileID: 1559174301474142769}
+  - {fileID: 8593492981445863148}
 --- !u!33 &3731530545537279589
 MeshFilter:
   m_ObjectHideFlags: 0
