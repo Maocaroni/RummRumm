@@ -5,8 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - carImage: {instanceID: 0}
-  - carPrefab: {fileID: 919132149155446097, guid: 1fdb4a2c50a2a094080e9f0b4b9ba0ee,
-      type: 3}
+  - carPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

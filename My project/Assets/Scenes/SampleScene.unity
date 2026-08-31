@@ -6602,7 +6602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
+  car: {fileID: 11400000, guid: 2161deda1374b4442b3feefb43482149, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 673267939}
@@ -7307,7 +7307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
+  car: {fileID: 11400000, guid: 7f9034d648d15404980bcdf2c2df64bb, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 1613842547}
@@ -8134,7 +8134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
+  car: {fileID: 11400000, guid: 6fcc90fa6596b534aba0b31b8e3b8565, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 367655916}
@@ -8395,7 +8395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
+  car: {fileID: 11400000, guid: af4a37dcc5fb980418a08475207a2ed0, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 197415777}
@@ -9038,7 +9038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
+  car: {fileID: 11400000, guid: 495ad620fff62ce4dbbfde8e1dd4e416, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 432859249}
