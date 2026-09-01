@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86eb6db9d628c045aefd89271758c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 11400000, guid: af4a37dcc5fb980418a08475207a2ed0, type: 2}
+  car: {fileID: 11400000, guid: 2161deda1374b4442b3feefb43482149, type: 2}
   speed: 0
   _wheelCollider:
   - {fileID: 6219666496977022523}
