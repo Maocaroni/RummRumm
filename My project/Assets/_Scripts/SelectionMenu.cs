@@ -1,92 +1,159 @@
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectionMenu : MonoBehaviour
 {
-    [Header("UI")]
-    // Almacena los elementos de la interfaz
-
-    // Varaible que almacena la imagen de los carros que aparece en el menu de seleccion
-    public Image carImage;
-
-    // Varaible que almacena el nombre de los carros que aparece en el menu de seleccion
+    [Header("UI Elements")]
     public TextMeshProUGUI carNameText;
-
-    // Los scrollbars que se muestran los stats de los carros
     public Scrollbar speedScrollbar;
     public Scrollbar brakeScrollbar;
     public Scrollbar angleScrollbar;
 
-    [Header("Cars")]
+    [Header("3D Preview Setup")]
+    public Transform previewSpawnPoint; 
+    [SerializeField] private float rotationSpeed = 25f;
+    [SerializeField] private float previewScale = 5f; 
 
-    // Guarda la camara
-    public CameraControler cam;
+    [Header("Camera Settings for Menu")]
+    public Camera gameCamera; // Arrastra aquí la cámara principal
+    public Transform menuCameraPositionPoint; // El objeto vacío ubicado frente al carro del menú
 
-    // Almacena los prefabs de los carros
+    [Header("References")]
+    public CameraControler cam; // El script CameraControler que está en la cámara
     public CarSo[] cars;
-
-    // Guarda el punto inicial
     public Transform initialPos;
 
-    // Va a guardar el carro seleccionado
     private CarSo selectedCar;
+    private GameObject currentCarPreview;
 
-    // Tamaño del maximo valor posible en el slider 
+    [Header("Max Stats for UI")]
     [SerializeField] private float maxScrollbar = 2000;
     [SerializeField] private float maxScrollbarAngle = 60;
 
-    // Guarda el indice del arreglo
     private int carIndex;
 
+    // Usamos Awake para forzar la posición de la cámara antes de que empiece cualquier otra cosa
+    private void Awake()
+    {
+        if (gameCamera != null && menuCameraPositionPoint != null)
+        {
+            gameCamera.transform.position = menuCameraPositionPoint.position;
+            gameCamera.transform.rotation = menuCameraPositionPoint.rotation;
+        }
+
+        if (cam != null)
+        {
+            cam.enabled = false; // Apagamos el script de seguimiento para que no mueva la cámara
+        }
+    }
 
     private void Start()
     {
         carIndex = 0;
-        selectedCar = cars[carIndex];
         UIUpdate();
     }
-    // Actualiza los elementos de la interfaz grafica
+
+    private void Update()
+    {
+        if (currentCarPreview != null)
+        {
+            currentCarPreview.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+        }
+    }
+
     public void UIUpdate()
     {
-        carImage.sprite = selectedCar.carImage;
+        selectedCar = cars[carIndex];
         carNameText.text = selectedCar.carName;
         speedScrollbar.size = selectedCar.speed / maxScrollbar;
         brakeScrollbar.size = selectedCar.brakeForce / maxScrollbar;
         angleScrollbar.size = selectedCar.angle / maxScrollbarAngle;
+
+        UpdateCarPreview();
     }
 
-    /// Los metodos de los botones
-    /// 
+    private void UpdateCarPreview()
+    {
+        if (currentCarPreview != null)
+        {
+            Destroy(currentCarPreview);
+        }
 
-    // Boton de izquierda y derecha
+        if (previewSpawnPoint != null && selectedCar.carPrefab != null)
+        {
+            currentCarPreview = Instantiate(selectedCar.carPrefab, previewSpawnPoint.position, previewSpawnPoint.rotation);
+            currentCarPreview.transform.localScale = Vector3.one * previewScale;
+
+            // --- ELIMINAR FÍSICAS Y CONTROLES EN EL MENÚ ---
+            Rigidbody rb = currentCarPreview.GetComponent<Rigidbody>();
+            if (rb != null) Destroy(rb);
+
+            foreach (var childRb in currentCarPreview.GetComponentsInChildren<Rigidbody>())
+            {
+                Destroy(childRb);
+            }
+
+            foreach (var wheel in currentCarPreview.GetComponentsInChildren<WheelCollider>())
+            {
+                Destroy(wheel);
+            }
+
+            CarMovement movementScript = currentCarPreview.GetComponent<CarMovement>();
+            if (movementScript != null) Destroy(movementScript);
+
+            InputController inputScript = currentCarPreview.GetComponent<InputController>();
+            if (inputScript != null) Destroy(inputScript);
+
+            // --- CENTRAR EL PIVOTE ---
+            Renderer[] renderers = currentCarPreview.GetComponentsInChildren<Renderer>();
+            if (renderers.Length > 0)
+            {
+                Bounds carBounds = renderers[0].bounds;
+                foreach (Renderer rend in renderers)
+                {
+                    carBounds.Encapsulate(rend.bounds);
+                }
+                Vector3 centerOffset = currentCarPreview.transform.position - carBounds.center;
+                currentCarPreview.transform.position += centerOffset;
+            }
+
+            currentCarPreview.transform.SetParent(previewSpawnPoint);
+        }
+    }
 
     public void CharacterChange(bool isButtonRight)
     {
         if (isButtonRight)
         {
-            // Al presionar el boton de la derecha, el indice avanza
             carIndex = (carIndex + 1) % cars.Length;
-
         }
         else
         {
-            // Al presionar el boton de la izquierda, el indice disminuye
             carIndex = (carIndex - 1 + cars.Length) % cars.Length;
         }
 
-        selectedCar = cars[carIndex];
-        UIUpdate() ;
+        UIUpdate();
     }
 
-    // Boton de seleccion
     public void SelectCar()
     {
-        // Al presionar el boton de seleccionar carro, se crea el elegido en escena y se le asigna a la camara el target
-        GameObject prefabSelected = Instantiate(selectedCar.carPrefab, initialPos.position, Quaternion.identity);
-        cam.target = prefabSelected.transform;
+        // 1. Instancia el carro real con físicas en la pista
+        GameObject prefabSelected = Instantiate(selectedCar.carPrefab, initialPos.position, initialPos.rotation);
+        
+        // 2. Asigna el objetivo al script de la cámara y vuelve a activarlo para que empiece a seguir al carro
+        if (cam != null)
+        {
+            cam.target = prefabSelected.transform;
+            cam.enabled = true; 
+        }
+        
+        // 3. Limpia la vista previa y apaga el menú
+        if (currentCarPreview != null)
+        {
+            Destroy(currentCarPreview);
+        }
+        
+        gameObject.SetActive(false); 
     }
-
-
 }

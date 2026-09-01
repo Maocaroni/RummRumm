@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b148fde3a6832914493561bf6ebde115, type: 3}
-  m_Name: New Car
+  m_Name: CarSo
   m_EditorClassIdentifier: 
-  speed: 500
-  brakeForce: 800
-  angle: 45
-  carImage: {fileID: 21300000, guid: 629bd8dce1a1f394291cfb137ae3212a, type: 3}
-  carName: Candy Kart
+  speed: 800
+  brakeForce: 1000
+  angle: 50
+  carImage: {fileID: 21300000, guid: 927c1418d55e5bb4f86072a0f618bfc8, type: 3}
+  carName: Pink Lightning
   carPrefab: {fileID: 1178533728401081508, guid: ae076c1de64c8cd4f9c115693a134a3a,
     type: 3}

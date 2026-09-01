@@ -17,5 +17,5 @@ MonoBehaviour:
   angle: 30
   carImage: {fileID: 21300000, guid: e9a346af90ba1ab43a4bc91fb51b2252, type: 3}
   carName: Ice Rocket
-  carPrefab: {fileID: 6020855436000399657, guid: bc2d5c2c9e6813b4fb6809d0b903721b,
+  carPrefab: {fileID: 8288552224841192269, guid: 4706283fb83f2d844a9deed8debeabb6,
     type: 3}
