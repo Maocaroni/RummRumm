@@ -18,6 +18,13 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private Light[] _headlights;
     [SerializeField] private KeyCode _lightToggleKey = KeyCode.L;
 
+    // Variables de control para el Algodón
+    private bool isInsideCotton = false;
+    private bool isCottonSlowed = false;
+    private float cottonImmunityEndTime = 0f;
+    private Coroutine cottonLingeringCoroutine;
+    private float originalDrag;
+
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -25,6 +32,7 @@ public class CarMovement : MonoBehaviour
         if (_rb != null)
         {
             _rb.centerOfMass = new Vector3(0, -0.5f, 0);
+            originalDrag = _rb.drag; // Guarda el drag original (en versiones anteriores de Unity usa _rb.drag)
         }
 
         if (car != null)
@@ -151,8 +159,62 @@ public class CarMovement : MonoBehaviour
     private IEnumerator SpeedBoostRoutine(float multiplier, float duration)
     {
         float originalSpeed = speed;
-        speed *= multiplier;
-        yield return new WaitForSeconds(duration);
-        speed = originalSpeed;
+        speed *= multiplier; 
+        yield return new WaitForSeconds(duration); 
+        speed = originalSpeed; 
+    }
+
+    // **ZONA DE ALGODÓN (RESISTENCIA FÍSICA / DRAG)**
+
+    public void EnterCottonZone(float cottonDrag)
+    {
+        if (Time.time < cottonImmunityEndTime) return;
+
+        isInsideCotton = true;
+
+        if (cottonLingeringCoroutine != null)
+        {
+            StopCoroutine(cottonLingeringCoroutine);
+            cottonLingeringCoroutine = null;
+        }
+
+        if (!isCottonSlowed)
+        {
+            // Aumentamos el drag (resistencia al avance) para frenar al carro de forma natural
+            if (_rb != null)
+            {
+                _rb.drag = cottonDrag; // Si usas una versión anterior a Unity 6, cambia linearDamping por drag
+            }
+            isCottonSlowed = true;
+        }
+    }
+
+    public void ExitCottonZone(float lingerDuration, float immunityDuration)
+    {
+        if (!isInsideCotton) return;
+        isInsideCotton = false;
+
+        if (cottonLingeringCoroutine != null)
+        {
+            StopCoroutine(cottonLingeringCoroutine);
+        }
+        cottonLingeringCoroutine = StartCoroutine(CottonLingeringRoutine(lingerDuration, immunityDuration));
+    }
+
+    private IEnumerator CottonLingeringRoutine(float linger, float immunity)
+    {
+        // Mantiene la resistencia durante el tiempo de salida
+        yield return new WaitForSeconds(linger);
+
+        if (isCottonSlowed)
+        {
+            if (_rb != null)
+            {
+                _rb.drag = originalDrag; // Restaura el drag normal
+            }
+            isCottonSlowed = false;
+        }
+
+        cottonImmunityEndTime = Time.time + immunity;
     }
 }

@@ -7,35 +7,35 @@ public class ItemAndPlatform : MonoBehaviour
     public ItemType itemType;
 
     [Header("Configuración de Plataforma (Impulso Físico)")]
-    [SerializeField] private float platformBoostForce = 20f;  // Fuerza instantánea de golpe
+    [SerializeField] private float platformBoostForce = 20f;  
 
     [Header("Configuración de Cereza (Velocidad Temporal)")]
-    [SerializeField] private float cherrySpeedMultiplier = 1.5f; // Multiplicador de velocidad (ej. 1.5 para 50% más rápido)
-    [SerializeField] private float cherryDuration = 3f;          // Cuántos segundos dura el efecto
+    [SerializeField] private float cherrySpeedMultiplier = 1.5f; 
+    [SerializeField] private float cherryDuration = 3f;          
+
+    [Header("Configuración de Algodón (Zona de Slow)")]
+    [SerializeField] private float cottonDrag = 8f;          // Resistencia alta para frenarlo (prueba entre 5 y 10)
+    [SerializeField] private float lingerDuration = 2f;        // Segundos que sigue lento al salir
+    [SerializeField] private float immunityDuration = 5f;      // Segundos de inmunidad si reentra
 
     [Header("Configuración de Otros Ítems")]
-    [SerializeField] private float slowMultiplier = 0.4f;      // Multiplicador para ralentizar (ej. 0.4)
-    [SerializeField] private int coinValue = 1;               // Valor de la moneda
+    [SerializeField] private int coinValue = 1;               
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
-
-        CarMovement carMovement = other.GetComponent<CarMovement>();
-        if (carMovement == null) return;
+        CarMovement carMovement = other.GetComponentInParent<CarMovement>();
+        
+        if (carMovement == null || !other.CompareTag("Player")) return;
 
         switch (itemType)
         {
             case ItemType.PlatformBoost:
-                // Impulso físico seco e instantáneo
                 carMovement.ApplyForceBoost(platformBoostForce);
                 Destroy(gameObject);
                 break;
 
             case ItemType.CottonSlow:
-                // Ralentiza el carro durante 1 segundo
-                carMovement.ApplySpeedBoost(slowMultiplier, 1f);
-                // Destroy(gameObject); // Descomenta si quieres que desaparezca
+                carMovement.EnterCottonZone(cottonDrag);
                 break;
 
             case ItemType.Coin:
@@ -44,10 +44,20 @@ public class ItemAndPlatform : MonoBehaviour
                 break;
 
             case ItemType.CherryBoost:
-                // Aumento sostenido de velocidad durante el tiempo configurado
                 carMovement.ApplySpeedBoost(cherrySpeedMultiplier, cherryDuration);
                 Destroy(gameObject);
                 break;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (itemType != ItemType.CottonSlow) return;
+
+        CarMovement carMovement = other.GetComponentInParent<CarMovement>();
+        if (carMovement != null && other.CompareTag("Player"))
+        {
+            carMovement.ExitCottonZone(lingerDuration, immunityDuration);
         }
     }
 }
