@@ -17,5 +17,5 @@ MonoBehaviour:
   angle: 30
   carImage: {fileID: 21300000, guid: e9a346af90ba1ab43a4bc91fb51b2252, type: 3}
   carName: Kit Kart
-  carPrefab: {fileID: 6020855436000399657, guid: bc2d5c2c9e6813b4fb6809d0b903721b,
+  carPrefab: {fileID: 6850358290857020974, guid: 9a9c7ad4875a4074a8225470b9041a26,
     type: 3}

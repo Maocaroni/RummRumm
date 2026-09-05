@@ -1085,13 +1085,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23332092, y: -0.008166314, z: 0.0019596594, w: 0.97236353}
+  m_LocalRotation: {x: 0.09100437, y: -0.00836329, z: 0.0007644244, w: 0.9958151}
   m_LocalPosition: {x: 0.7750948, y: 5.308526, z: -9.038093}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10.443, y: -0.962, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1151,7 +1151,7 @@ MonoBehaviour:
   target: {fileID: 0}
   rotationSpeed: 10
   followSpeed: 10
-  offset: {x: 0, y: 4.5, z: -4.5}
+  offset: {x: 0, y: 2.18, z: -3.86}
 --- !u!1 &389042816 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6158778124895081669, guid: 5016b9a13d91f164aadf4f49416e44ca,
@@ -3685,6 +3685,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7f9034d648d15404980bcdf2c2df64bb, type: 2}
   - {fileID: 11400000, guid: af4a37dcc5fb980418a08475207a2ed0, type: 2}
   - {fileID: 11400000, guid: 2161deda1374b4442b3feefb43482149, type: 2}
+  - {fileID: 11400000, guid: 6fcc90fa6596b534aba0b31b8e3b8565, type: 2}
+  - {fileID: 11400000, guid: b021e71a273e3fc498231797fa6615f1, type: 2}
   initialPos: {fileID: 653142290}
   maxScrollbar: 2000
   maxScrollbarAngle: 60

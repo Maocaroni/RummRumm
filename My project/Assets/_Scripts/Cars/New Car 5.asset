@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b148fde3a6832914493561bf6ebde115, type: 3}
-  m_Name: New Car 2
+  m_Name: New Car 5
   m_EditorClassIdentifier: 
   speed: 1000
   brakeForce: 700
   angle: 30
   carImage: {fileID: 21300000, guid: e9a346af90ba1ab43a4bc91fb51b2252, type: 3}
-  carName: Ice Rocket
-  carPrefab: {fileID: 143777725414901934, guid: 89ea39fe9b877d7449167b8614c52a8b,
+  carName: Cooco
+  carPrefab: {fileID: 5516782644538724837, guid: f47d61f8acad8354ab89da50fda319bd,
     type: 3}
