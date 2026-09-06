@@ -8,18 +8,19 @@ public class ItemAndPlatform : MonoBehaviour
 
     [Header("Configuración de Plataforma (Impulso Físico)")]
     [SerializeField] private float platformBoostForce = 20f;  
+    [SerializeField] private float upwardBoostForce = 5f;     
 
     [Header("Configuración de Cereza (Velocidad Temporal)")]
     [SerializeField] private float cherrySpeedMultiplier = 1.5f; 
-    [SerializeField] private float cherryDuration = 3f;          
+    [SerializeField] private float cherryDuration = 3f;           
 
     [Header("Configuración de Algodón (Zona de Slow)")]
-    [SerializeField] private float cottonDrag = 8f;          // Resistencia alta para frenarlo (prueba entre 5 y 10)
-    [SerializeField] private float lingerDuration = 2f;        // Segundos que sigue lento al salir
-    [SerializeField] private float immunityDuration = 5f;      // Segundos de inmunidad si reentra
+    [SerializeField] private float cottonDrag = 8f;           
+    [SerializeField] private float lingerDuration = 2f;         
+    [SerializeField] private float immunityDuration = 5f;       
 
     [Header("Configuración de Otros Ítems")]
-    [SerializeField] private int coinValue = 1;               
+    [SerializeField] private int coinValue = 1;                 
 
     private void OnTriggerEnter(Collider other)
     {
@@ -30,8 +31,9 @@ public class ItemAndPlatform : MonoBehaviour
         switch (itemType)
         {
             case ItemType.PlatformBoost:
-                carMovement.ApplyForceBoost(platformBoostForce);
-                Destroy(gameObject);
+                // Creamos una dirección que combina el frente del carro y una ligera elevación hacia arriba
+                Vector3 boostDirection = (other.transform.forward + Vector3.up * 0.3f).normalized;
+                carMovement.ApplyForceBoost(boostDirection * platformBoostForce);
                 break;
 
             case ItemType.CottonSlow:

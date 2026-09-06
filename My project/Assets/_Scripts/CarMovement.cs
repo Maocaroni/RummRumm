@@ -18,6 +18,12 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private Light[] _headlights;
     [SerializeField] private KeyCode _lightToggleKey = KeyCode.L;
 
+    [Header("Jump, Grip & Stability")]
+    [SerializeField] private float gravityMultiplier = 3.0f; // Controla qué tan rápido cae tras una rampa
+    [SerializeField] private float sidewaysGrip = 2.5f;       // Controla el agarre lateral (evita que resbale en curvas)
+    [SerializeField] private float forwardGrip = 2.0f;        // Controla el agarre frontal
+    [SerializeField] private float downforce = 50f;         // Fuerza que presiona el carro contra el suelo en bajadas
+
     // Variables de control para el Algodón
     private bool isInsideCotton = false;
     private bool isCottonSlowed = false;
@@ -31,8 +37,9 @@ public class CarMovement : MonoBehaviour
 
         if (_rb != null)
         {
-            _rb.centerOfMass = new Vector3(0, -0.5f, 0);
-            originalDrag = _rb.drag; // Guarda el drag original (en versiones anteriores de Unity usa _rb.drag)
+            // Centro de masa ligeramente abajo y un poco hacia atrás para evitar que se entierre en bajadas
+            _rb.centerOfMass = new Vector3(0, -0.5f, -0.2f);
+            originalDrag = _rb.drag; 
         }
 
         if (car != null)
@@ -43,6 +50,9 @@ public class CarMovement : MonoBehaviour
         {
             Debug.LogError("¡Falta asignar el Scriptable Object 'CarSo' en el carro!");
         }
+
+        // Aplica el agarre por código a las ruedas al iniciar
+        AdjustWheelFriction();
     }
 
     void Update()
@@ -58,6 +68,8 @@ public class CarMovement : MonoBehaviour
         Motor();
         Brake();
         Steering();
+        ApplyCustomGravity(); // Aplica gravedad extra cuando el carro está volando
+        ApplyDownforce();     // Mantiene el carro pegado y estable en bajadas
     }
 
     private void LateUpdate()
@@ -143,11 +155,12 @@ public class CarMovement : MonoBehaviour
         }
     }
 
-    public void ApplyForceBoost(float pushForce)
+    // Actualizado para recibir un Vector3 completo (dirección y fuerza del impulso)
+    public void ApplyForceBoost(Vector3 finalBoostVector)
     {
         if (_rb != null)
         {
-            _rb.AddForce(transform.forward * pushForce, ForceMode.VelocityChange);
+            _rb.AddForce(finalBoostVector, ForceMode.VelocityChange);
         }
     }
 
@@ -162,6 +175,71 @@ public class CarMovement : MonoBehaviour
         speed *= multiplier; 
         yield return new WaitForSeconds(duration); 
         speed = originalSpeed; 
+    }
+
+    // Configuración de fricción interna para evitar que resbale en la pista
+    void AdjustWheelFriction()
+    {
+        if (_wheelCollider == null) return;
+
+        foreach (var wheel in _wheelCollider)
+        {
+            if (wheel != null)
+            {
+                WheelFrictionCurve sidewaysFriction = wheel.sidewaysFriction;
+                sidewaysFriction.extremumValue = sidewaysGrip;
+                sidewaysFriction.asymptoteValue = sidewaysGrip * 0.8f;
+                wheel.sidewaysFriction = sidewaysFriction;
+
+                WheelFrictionCurve forwardFriction = wheel.forwardFriction;
+                forwardFriction.extremumValue = forwardGrip;
+                forwardFriction.asymptoteValue = forwardGrip * 0.75f;
+                wheel.forwardFriction = forwardFriction;
+            }
+        }
+    }
+
+    // Control de gravedad forzada para evitar saltos demasiado largos
+    void ApplyCustomGravity()
+    {
+        if (_rb == null || _wheelCollider == null) return;
+
+        bool isGrounded = false;
+        foreach (var wheel in _wheelCollider)
+        {
+            if (wheel != null && wheel.isGrounded)
+            {
+                isGrounded = true;
+                break;
+            }
+        }
+
+        // Si el carro no está tocando el suelo, cae más rápido
+        if (!isGrounded)
+        {
+            _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
+        }
+    }
+
+    // Fuerza descendente local para mantener el carro estable y recto en bajadas
+    void ApplyDownforce()
+    {
+        if (_rb == null) return;
+        _rb.AddForce(-transform.up * downforce * _rb.velocity.magnitude);
+    }
+
+    // Permite cambiar temporalmente la gravedad para saltos largos específicos (como acantilados)
+    public void BoostJumpGravity(float temporaryGravityMultiplier, float duration)
+    {
+        StartCoroutine(JumpGravityRoutine(temporaryGravityMultiplier, duration));
+    }
+
+    private IEnumerator JumpGravityRoutine(float tempMultiplier, float duration)
+    {
+        float originalMultiplier = gravityMultiplier;
+        gravityMultiplier = tempMultiplier; 
+        yield return new WaitForSeconds(duration);
+        gravityMultiplier = originalMultiplier; 
     }
 
     // **ZONA DE ALGODÓN (RESISTENCIA FÍSICA / DRAG)**
@@ -180,10 +258,9 @@ public class CarMovement : MonoBehaviour
 
         if (!isCottonSlowed)
         {
-            // Aumentamos el drag (resistencia al avance) para frenar al carro de forma natural
             if (_rb != null)
             {
-                _rb.drag = cottonDrag; // Si usas una versión anterior a Unity 6, cambia linearDamping por drag
+                _rb.drag = cottonDrag;
             }
             isCottonSlowed = true;
         }
@@ -203,14 +280,13 @@ public class CarMovement : MonoBehaviour
 
     private IEnumerator CottonLingeringRoutine(float linger, float immunity)
     {
-        // Mantiene la resistencia durante el tiempo de salida
         yield return new WaitForSeconds(linger);
 
         if (isCottonSlowed)
         {
             if (_rb != null)
             {
-                _rb.drag = originalDrag; // Restaura el drag normal
+                _rb.drag = originalDrag;
             }
             isCottonSlowed = false;
         }
