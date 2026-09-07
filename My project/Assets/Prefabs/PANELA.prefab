@@ -134,9 +134,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036350631794670434}
   serializedVersion: 4
-  m_Mass: 1000
-  m_Drag: 0.1
-  m_AngularDrag: 2
+  m_Mass: 1200
+  m_Drag: 0.05
+  m_AngularDrag: 4
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -146,7 +146,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -200,9 +200,11 @@ MonoBehaviour:
   - {fileID: 4029338198772110533}
   _headlights: []
   _lightToggleKey: 108
+  centerOfMassObject: {fileID: 4423998795715200284}
   gravityMultiplier: 2
-  sidewaysGrip: 2.5
-  forwardGrip: 2
+  sidewaysGrip: 3
+  forwardGrip: 2.5
+  downforce: 60
 --- !u!114 &3781437149420560702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,8 +262,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.19
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 7000
+    damper: 1400
     targetPosition: 0.5
   m_SuspensionDistance: 0.25
   m_ForceAppPointDistance: 0
@@ -278,7 +280,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 4
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -331,8 +333,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.29
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 7000
+    damper: 1400
     targetPosition: 0.5
   m_SuspensionDistance: 0.25
   m_ForceAppPointDistance: 0
@@ -349,7 +351,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 4
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -603,8 +605,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.19
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 7000
+    damper: 1400
     targetPosition: 0.5
   m_SuspensionDistance: 0.25
   m_ForceAppPointDistance: 0
@@ -621,7 +623,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 4
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -641,7 +643,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4423998795715200284}
   m_Layer: 0
-  m_Name: Median
+  m_Name: CenterOfMass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -656,7 +658,7 @@ Transform:
   m_GameObject: {fileID: 6262706112455872676}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.205, z: 0}
+  m_LocalPosition: {x: 0, y: -0.206, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -788,8 +790,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.29
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 7000
+    damper: 1400
     targetPosition: 0.5
   m_SuspensionDistance: 0.25
   m_ForceAppPointDistance: 0
@@ -806,7 +808,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 4
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

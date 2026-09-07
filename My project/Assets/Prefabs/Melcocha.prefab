@@ -38,6 +38,7 @@ Transform:
   - {fileID: 879555152501459140}
   - {fileID: 3811324672307298940}
   - {fileID: 221302137279434620}
+  - {fileID: 199105748148708463}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3828957128157557578
@@ -120,8 +121,8 @@ Rigidbody:
   m_GameObject: {fileID: 143777725414901934}
   serializedVersion: 4
   m_Mass: 1500
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 0.1
+  m_AngularDrag: 4
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -131,7 +132,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -164,6 +165,11 @@ MonoBehaviour:
   - {fileID: 7358614663480458795}
   _headlights: []
   _lightToggleKey: 108
+  centerOfMassObject: {fileID: 199105748148708463}
+  gravityMultiplier: 2
+  sidewaysGrip: 2.5
+  forwardGrip: 2
+  downforce: 50
 --- !u!114 &5598409144120209601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,8 +227,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.16
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 10000
+    damper: 1500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
@@ -239,7 +245,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 2.2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -249,6 +255,37 @@ WheelCollider:
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
+--- !u!1 &938108802533524699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 199105748148708463}
+  m_Layer: 0
+  m_Name: CenterOfMass
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &199105748148708463
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 938108802533524699}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.142, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1177483457325089561}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1095260351674782017
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,8 +329,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.23
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 10000
+    damper: 1500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
@@ -310,7 +347,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 2.2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -398,8 +435,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.23
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 10000
+    damper: 1500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
@@ -416,7 +453,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 2.2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -836,8 +873,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.16
   m_SuspensionSpring:
-    spring: 35000
-    damper: 4500
+    spring: 10000
+    damper: 1500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
@@ -854,7 +891,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 2.2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

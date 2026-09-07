@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b148fde3a6832914493561bf6ebde115, type: 3}
   m_Name: New Car 4
   m_EditorClassIdentifier: 
-  speed: 400
-  brakeForce: 1000
-  angle: 50
+  speed: 480
+  brakeForce: 1400
+  angle: 40
   carImage: {fileID: 21300000, guid: e9a346af90ba1ab43a4bc91fb51b2252, type: 3}
   carName: Chicharrona
   carPrefab: {fileID: 6850358290857020974, guid: 9a9c7ad4875a4074a8225470b9041a26,

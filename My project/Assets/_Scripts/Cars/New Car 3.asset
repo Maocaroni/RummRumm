@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: New Car 3
   m_EditorClassIdentifier: 
   speed: 400
-  brakeForce: 1000
-  angle: 50
+  brakeForce: 1600
+  angle: 30
   carImage: {fileID: 21300000, guid: e9a346af90ba1ab43a4bc91fb51b2252, type: 3}
   carName: Merengon
   carPrefab: {fileID: 7262985162244708731, guid: c756c88eee0e012469a858c318dd6fe6,

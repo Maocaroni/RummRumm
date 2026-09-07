@@ -18,6 +18,9 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private Light[] _headlights;
     [SerializeField] private KeyCode _lightToggleKey = KeyCode.L;
 
+    [Header("Center of Mass Setup")]
+    [SerializeField] private Transform centerOfMassObject; // Arrastra aquí el objeto vacío hijo
+
     [Header("Jump, Grip & Stability")]
     [SerializeField] private float gravityMultiplier = 3.0f; // Controla qué tan rápido cae tras una rampa
     [SerializeField] private float sidewaysGrip = 2.5f;       // Controla el agarre lateral (evita que resbale en curvas)
@@ -37,8 +40,17 @@ public class CarMovement : MonoBehaviour
 
         if (_rb != null)
         {
-            // Centro de masa ligeramente abajo y un poco hacia atrás para evitar que se entierre en bajadas
-            _rb.centerOfMass = new Vector3(0, -0.5f, -0.2f);
+            // Si asignaste un objeto en el Inspector, usa su posición exacta de forma local
+            if (centerOfMassObject != null)
+            {
+                _rb.centerOfMass = transform.InverseTransformPoint(centerOfMassObject.position);
+            }
+            else
+            {
+                // Respaldo por si falta asignar el objeto
+                _rb.centerOfMass = new Vector3(0, -0.5f, -0.2f);
+            }
+
             originalDrag = _rb.drag; 
         }
 
@@ -155,7 +167,6 @@ public class CarMovement : MonoBehaviour
         }
     }
 
-    // Actualizado para recibir un Vector3 completo (dirección y fuerza del impulso)
     public void ApplyForceBoost(Vector3 finalBoostVector)
     {
         if (_rb != null)
@@ -177,7 +188,6 @@ public class CarMovement : MonoBehaviour
         speed = originalSpeed; 
     }
 
-    // Configuración de fricción interna para evitar que resbale en la pista
     void AdjustWheelFriction()
     {
         if (_wheelCollider == null) return;
@@ -199,7 +209,6 @@ public class CarMovement : MonoBehaviour
         }
     }
 
-    // Control de gravedad forzada para evitar saltos demasiado largos
     void ApplyCustomGravity()
     {
         if (_rb == null || _wheelCollider == null) return;
@@ -214,21 +223,18 @@ public class CarMovement : MonoBehaviour
             }
         }
 
-        // Si el carro no está tocando el suelo, cae más rápido
         if (!isGrounded)
         {
             _rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
         }
     }
 
-    // Fuerza descendente local para mantener el carro estable y recto en bajadas
     void ApplyDownforce()
     {
         if (_rb == null) return;
         _rb.AddForce(-transform.up * downforce * _rb.velocity.magnitude);
     }
 
-    // Permite cambiar temporalmente la gravedad para saltos largos específicos (como acantilados)
     public void BoostJumpGravity(float temporaryGravityMultiplier, float duration)
     {
         StartCoroutine(JumpGravityRoutine(temporaryGravityMultiplier, duration));
@@ -241,8 +247,6 @@ public class CarMovement : MonoBehaviour
         yield return new WaitForSeconds(duration);
         gravityMultiplier = originalMultiplier; 
     }
-
-    // **ZONA DE ALGODÓN (RESISTENCIA FÍSICA / DRAG)**
 
     public void EnterCottonZone(float cottonDrag)
     {
@@ -292,5 +296,24 @@ public class CarMovement : MonoBehaviour
         }
 
         cottonImmunityEndTime = Time.time + immunity;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("CottonZone"))
+        {
+            float cottonDragValue = 5.0f; 
+            EnterCottonZone(cottonDragValue);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("CottonZone"))
+        {
+            float lingerTime = 0.5f;
+            float immunityTime = 1.0f;
+            ExitCottonZone(lingerTime, immunityTime);
+        }
     }
 }

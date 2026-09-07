@@ -10,19 +10,23 @@ public class SelectionMenu : MonoBehaviour
     public Scrollbar brakeScrollbar;
     public Scrollbar angleScrollbar;
 
+    [Header("Canvas Settings")]
+    [SerializeField] private Canvas mainCanvas;
+
     [Header("3D Preview Setup")]
     public Transform previewSpawnPoint; 
     [SerializeField] private float rotationSpeed = 25f;
     [SerializeField] private float previewScale = 5f; 
 
     [Header("Camera Settings for Menu")]
-    public Camera gameCamera; // Arrastra aquí la cámara principal
-    public Transform menuCameraPositionPoint; // El objeto vacío ubicado frente al carro del menú
+    public Camera gameCamera; 
+    public Transform menuCameraPositionPoint; 
 
     [Header("References")]
-    public CameraControler cam; // El script CameraControler que está en la cámara
+    public CameraControler cam; 
     public CarSo[] cars;
     public Transform initialPos;
+    [SerializeField] private GameObject hudPanel; 
 
     private CarSo selectedCar;
     private GameObject currentCarPreview;
@@ -33,7 +37,6 @@ public class SelectionMenu : MonoBehaviour
 
     private int carIndex;
 
-    // Usamos Awake para forzar la posición de la cámara antes de que empiece cualquier otra cosa
     private void Awake()
     {
         if (gameCamera != null && menuCameraPositionPoint != null)
@@ -44,7 +47,12 @@ public class SelectionMenu : MonoBehaviour
 
         if (cam != null)
         {
-            cam.enabled = false; // Apagamos el script de seguimiento para que no mueva la cámara
+            cam.enabled = false; 
+        }
+
+        if (hudPanel != null)
+        {
+            hudPanel.SetActive(false);
         }
     }
 
@@ -85,7 +93,6 @@ public class SelectionMenu : MonoBehaviour
             currentCarPreview = Instantiate(selectedCar.carPrefab, previewSpawnPoint.position, previewSpawnPoint.rotation);
             currentCarPreview.transform.localScale = Vector3.one * previewScale;
 
-            // --- ELIMINAR FÍSICAS Y CONTROLES EN EL MENÚ ---
             Rigidbody rb = currentCarPreview.GetComponent<Rigidbody>();
             if (rb != null) Destroy(rb);
 
@@ -105,7 +112,6 @@ public class SelectionMenu : MonoBehaviour
             InputController inputScript = currentCarPreview.GetComponent<InputController>();
             if (inputScript != null) Destroy(inputScript);
 
-            // --- CENTRAR EL PIVOTE ---
             Renderer[] renderers = currentCarPreview.GetComponentsInChildren<Renderer>();
             if (renderers.Length > 0)
             {
@@ -138,17 +144,24 @@ public class SelectionMenu : MonoBehaviour
 
     public void SelectCar()
     {
-        // 1. Instancia el carro real con físicas en la pista
+        if (mainCanvas != null)
+        {
+            mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        }
+
         GameObject prefabSelected = Instantiate(selectedCar.carPrefab, initialPos.position, initialPos.rotation);
         
-        // 2. Asigna el objetivo al script de la cámara y vuelve a activarlo para que empiece a seguir al carro
         if (cam != null)
         {
             cam.target = prefabSelected.transform;
             cam.enabled = true; 
         }
         
-        // 3. Limpia la vista previa y apaga el menú
+        if (hudPanel != null)
+        {
+            hudPanel.SetActive(true);
+        }
+
         if (currentCarPreview != null)
         {
             Destroy(currentCarPreview);
