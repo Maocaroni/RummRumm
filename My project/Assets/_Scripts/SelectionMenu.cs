@@ -12,6 +12,8 @@ public class SelectionMenu : MonoBehaviour
 
     [Header("Canvas Settings")]
     [SerializeField] private Canvas mainCanvas;
+    [Header("Panel Visual del Menú")]
+    [SerializeField] private GameObject menuUIPanel;
 
     [Header("3D Preview Setup")]
     public Transform previewSpawnPoint; 
@@ -83,7 +85,6 @@ public class SelectionMenu : MonoBehaviour
 
     private void UpdateCarPreview()
     {
-        // 1. Guardamos la rotación actual que lleva el carro en pantalla antes de borrarlo
         Quaternion lastRotation = Quaternion.identity;
         if (currentCarPreview != null)
         {
@@ -93,7 +94,6 @@ public class SelectionMenu : MonoBehaviour
 
         if (previewSpawnPoint != null && selectedCar.carPrefab != null)
         {
-            // 2. Instanciamos el nuevo carro usando la rotación guardada en lugar de la original del prefab
             currentCarPreview = Instantiate(selectedCar.carPrefab, previewSpawnPoint.position, lastRotation);
             currentCarPreview.transform.localScale = Vector3.one * previewScale;
 
@@ -162,10 +162,10 @@ public class SelectionMenu : MonoBehaviour
             GameManager.instance.ResumeGame();
         }
         
-      // Corrige la validación de la cámara aquí:
         if (cam != null)
         {
             cam.target = prefabSelected.transform;
+            cam.SnapToTarget(); 
             cam.enabled = true; 
         }
         
@@ -179,11 +179,13 @@ public class SelectionMenu : MonoBehaviour
             Destroy(currentCarPreview);
         }
         
-        // CORRECCIÓN: En vez de apagar el objeto entero (que apaga el GameManager),
-        // desactiva solo este script o el panel visual del menú:
-        this.enabled = false; 
-        
-        // O si tienes un panel específico del menú, puedes hacer:
-        // menuPanelGameObject.SetActive(false);
+        if (menuUIPanel != null)
+        {
+            menuUIPanel.SetActive(false);
+        }
+        else
+        {
+            this.enabled = false;
+        }
     }
 }
