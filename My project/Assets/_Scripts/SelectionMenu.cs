@@ -83,14 +83,18 @@ public class SelectionMenu : MonoBehaviour
 
     private void UpdateCarPreview()
     {
+        // 1. Guardamos la rotación actual que lleva el carro en pantalla antes de borrarlo
+        Quaternion lastRotation = Quaternion.identity;
         if (currentCarPreview != null)
         {
+            lastRotation = currentCarPreview.transform.rotation;
             Destroy(currentCarPreview);
         }
 
         if (previewSpawnPoint != null && selectedCar.carPrefab != null)
         {
-            currentCarPreview = Instantiate(selectedCar.carPrefab, previewSpawnPoint.position, previewSpawnPoint.rotation);
+            // 2. Instanciamos el nuevo carro usando la rotación guardada en lugar de la original del prefab
+            currentCarPreview = Instantiate(selectedCar.carPrefab, previewSpawnPoint.position, lastRotation);
             currentCarPreview.transform.localScale = Vector3.one * previewScale;
 
             Rigidbody rb = currentCarPreview.GetComponent<Rigidbody>();
@@ -150,7 +154,15 @@ public class SelectionMenu : MonoBehaviour
         }
 
         GameObject prefabSelected = Instantiate(selectedCar.carPrefab, initialPos.position, initialPos.rotation);
+        prefabSelected.tag = "Player";
+
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.SetPlayerCar(prefabSelected);
+            GameManager.instance.ResumeGame();
+        }
         
+      // Corrige la validación de la cámara aquí:
         if (cam != null)
         {
             cam.target = prefabSelected.transform;
@@ -167,6 +179,11 @@ public class SelectionMenu : MonoBehaviour
             Destroy(currentCarPreview);
         }
         
-        gameObject.SetActive(false); 
+        // CORRECCIÓN: En vez de apagar el objeto entero (que apaga el GameManager),
+        // desactiva solo este script o el panel visual del menú:
+        this.enabled = false; 
+        
+        // O si tienes un panel específico del menú, puedes hacer:
+        // menuPanelGameObject.SetActive(false);
     }
 }
