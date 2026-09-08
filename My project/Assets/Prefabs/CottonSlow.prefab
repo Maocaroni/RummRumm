@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 813993216938447405}
   - component: {fileID: 1672012444267965667}
   - component: {fileID: 5518143981035790835}
+  - component: {fileID: 1407709426275093089}
   m_Layer: 0
   m_Name: CottonSlow
   m_TagString: Untagged
@@ -97,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb0c3bc06ee94964e98f4f6c2acbebbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 0
+  itemType: 1
   platformBoostForce: 0
   upwardBoostForce: 0
   cherrySpeedMultiplier: 0
@@ -106,3 +107,24 @@ MonoBehaviour:
   lingerDuration: 2
   immunityDuration: 5
   coinValue: 0
+--- !u!65 &1407709426275093089
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6889147104071756129}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2674229, y: 1.6559141, z: 1.3671572}
+  m_Center: {x: -0.05711651, y: 0.022782564, z: 0.055578023}
