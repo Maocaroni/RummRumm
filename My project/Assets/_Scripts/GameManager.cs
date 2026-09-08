@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     private bool routeA_Passed = false;
     private bool routeB_Passed = false;
 
+    [Header("Arreglo de Volumen")]
+    [SerializeField] private GameObject globalVolumeObject; // Arrastra aquí tu objeto de Global Volume
+
     private bool isPaused = false;
 
     void Awake()
@@ -53,6 +56,9 @@ public class GameManager : MonoBehaviour
 
         // Aseguramos que la meta empiece desactivada hasta que elijan ruta
         if (victoryColliderObject) victoryColliderObject.SetActive(false);
+
+        // Forzar reinicio del Global Volume para solucionar el fallo de sombras al cambiar de escena
+        RefreshGlobalVolume();
 
         UpdateScoreUI();
         
@@ -135,6 +141,9 @@ public class GameManager : MonoBehaviour
             FindPlayerCar();
         }
 
+        // Refrescar volumen también al reanudar por seguridad
+        RefreshGlobalVolume();
+
         if (pausePanel) pausePanel.SetActive(false);
         if (victoryPanel) victoryPanel.SetActive(false);
         if (hudPanel) hudPanel.SetActive(true);
@@ -199,6 +208,16 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(menuSceneName);
+    }
+
+    // --- MÉTODO AUXILIAR PARA EL GLOBAL VOLUME ---
+    private void RefreshGlobalVolume()
+    {
+        if (globalVolumeObject != null)
+        {
+            globalVolumeObject.SetActive(false);
+            globalVolumeObject.SetActive(true);
+        }
     }
 
     // --- SISTEMA DE RUTAS Y VICTORIA INTELIGENTE ---

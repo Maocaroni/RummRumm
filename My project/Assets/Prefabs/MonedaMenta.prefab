@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb0c3bc06ee94964e98f4f6c2acbebbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 0
+  itemType: 2
   platformBoostForce: 0
   upwardBoostForce: 0
   cherrySpeedMultiplier: 0
