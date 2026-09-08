@@ -8,6 +8,9 @@ TagManager:
   - ColorCylinder
   - ColorToggle
   - ColorRandomZone
+  - Obstacle
+  - Water
+  - DeathZone
   layers:
   - Default
   - TransparentFX

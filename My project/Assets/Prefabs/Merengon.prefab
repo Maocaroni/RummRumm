@@ -804,6 +804,12 @@ MonoBehaviour:
   sidewaysGrip: 3.5
   forwardGrip: 3
   downforce: 90
+  checkpointInterval: 3
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  raycastDistance: 1.5
+  fallLimitY: -500
 --- !u!114 &8084016457939904611
 MonoBehaviour:
   m_ObjectHideFlags: 0

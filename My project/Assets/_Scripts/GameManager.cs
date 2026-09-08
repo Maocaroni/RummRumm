@@ -23,6 +23,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform startPosition; 
     [SerializeField] private GameObject playerCar;
 
+    [Header("Configuración de Rutas y Victoria")]
+    [SerializeField] private GameObject victoryColliderObject; // El objeto con el Box Collider de la meta
+    private bool routeA_Passed = false;
+    private bool routeB_Passed = false;
+
     private bool isPaused = false;
 
     void Awake()
@@ -45,6 +50,9 @@ public class GameManager : MonoBehaviour
         if (pausePanel) pausePanel.SetActive(false);
         if (victoryPanel) victoryPanel.SetActive(false);
         if (hudPanel) hudPanel.SetActive(false); 
+
+        // Aseguramos que la meta empiece desactivada hasta que elijan ruta
+        if (victoryColliderObject) victoryColliderObject.SetActive(false);
 
         UpdateScoreUI();
         
@@ -79,7 +87,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-private void UpdateSpeedUI()
+    private void UpdateSpeedUI()
     {
         if (speedText == null) return;
 
@@ -99,7 +107,6 @@ private void UpdateSpeedUI()
         }
         else
         {
-            // Mientras no haya carro seleccionado, el texto se queda en blanco en lugar de decir "SIN CARRO"
             speedText.text = ""; 
         }
     }
@@ -118,19 +125,18 @@ private void UpdateSpeedUI()
         }
     }
 
-  public void ResumeGame()
+    public void ResumeGame()
     {
         isPaused = false;
         Time.timeScale = 1f;
         
-        // Si el carro no está asignado, lo busca de inmediato en la escena
         if (playerCar == null)
         {
             FindPlayerCar();
         }
 
         if (pausePanel) pausePanel.SetActive(false);
-        if (victoryPanel) pausePanel.SetActive(false);
+        if (victoryPanel) victoryPanel.SetActive(false);
         if (hudPanel) hudPanel.SetActive(true);
     }
 
@@ -154,6 +160,14 @@ private void UpdateSpeedUI()
     public void RestartGame()
     {
         Time.timeScale = 1f;
+
+        // Aseguramos que el panel de victoria se desactive al reiniciar
+        if (victoryPanel) victoryPanel.SetActive(false);
+
+        // Reiniciamos las rutas al reiniciar el juego por si acaso
+        routeA_Passed = false;
+        routeB_Passed = false;
+        if (victoryColliderObject) victoryColliderObject.SetActive(false);
 
         if (playerCar == null)
         {
@@ -185,5 +199,33 @@ private void UpdateSpeedUI()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(menuSceneName);
+    }
+
+    // --- SISTEMA DE RUTAS Y VICTORIA INTELIGENTE ---
+
+    public void NotifyRoutePassed(int routeID)
+    {
+        if (routeID == 1) routeA_Passed = true;
+        if (routeID == 2) routeB_Passed = true;
+
+        // Si pasa por cualquiera de los dos caminos, activamos el collider de la meta final
+        if ((routeA_Passed || routeB_Passed) && victoryColliderObject != null)
+        {
+            victoryColliderObject.SetActive(true);
+            Debug.Log("¡Ruta completada! Meta de victoria habilitada.");
+        }
+    }
+
+    public void ReachVictoryZone()
+    {
+        // Solo da la victoria si previamente pasó por el camino A o el camino B
+        if (routeA_Passed || routeB_Passed)
+        {
+            TriggerVictory();
+        }
+        else
+        {
+            Debug.LogWarning("¡Intentaste cruzar la meta sin pasar por ningún camino válido!");
+        }
     }
 }

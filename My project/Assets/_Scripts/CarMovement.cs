@@ -19,13 +19,23 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private KeyCode _lightToggleKey = KeyCode.L;
 
     [Header("Center of Mass Setup")]
-    [SerializeField] private Transform centerOfMassObject; // Arrastra aquí el objeto vacío hijo
+    [SerializeField] private Transform centerOfMassObject; 
 
     [Header("Jump, Grip & Stability")]
-    [SerializeField] private float gravityMultiplier = 3.0f; // Controla qué tan rápido cae tras una rampa
-    [SerializeField] private float sidewaysGrip = 2.5f;       // Controla el agarre lateral (evita que resbale en curvas)
-    [SerializeField] private float forwardGrip = 2.0f;        // Controla el agarre frontal
-    [SerializeField] private float downforce = 50f;         // Fuerza que presiona el carro contra el suelo en bajadas
+    [SerializeField] private float gravityMultiplier = 3.0f; 
+    [SerializeField] private float sidewaysGrip = 2.5f;       
+    [SerializeField] private float forwardGrip = 2.0f;        
+    [SerializeField] private float downforce = 50f;         
+
+    [Header("Checkpoint & Respawn Setup")]
+    [SerializeField] private float checkpointInterval = 3f; 
+    [SerializeField] private LayerMask groundLayer;          
+    [SerializeField] private float raycastDistance = 1.5f;   
+    [SerializeField] private float fallLimitY = -50f;        
+
+    private Vector3 lastCheckpointPos;
+    private Quaternion lastCheckpointRot;
+    private bool isGroundedForCheckpoint = false;
 
     // Variables de control para el Algodón
     private bool isInsideCotton = false;
@@ -40,14 +50,12 @@ public class CarMovement : MonoBehaviour
 
         if (_rb != null)
         {
-            // Si asignaste un objeto en el Inspector, usa su posición exacta de forma local
             if (centerOfMassObject != null)
             {
                 _rb.centerOfMass = transform.InverseTransformPoint(centerOfMassObject.position);
             }
             else
             {
-                // Respaldo por si falta asignar el objeto
                 _rb.centerOfMass = new Vector3(0, -0.5f, -0.2f);
             }
 
@@ -63,8 +71,10 @@ public class CarMovement : MonoBehaviour
             Debug.LogError("¡Falta asignar el Scriptable Object 'CarSo' en el carro!");
         }
 
-        // Aplica el agarre por código a las ruedas al iniciar
         AdjustWheelFriction();
+
+        SaveCurrentCheckpoint();
+        StartCoroutine(AutoCheckpointRoutine());
     }
 
     void Update()
@@ -73,6 +83,8 @@ public class CarMovement : MonoBehaviour
         {
             ToggleHeadlights();
         }
+
+        CheckFallLimit();
     }
 
     private void FixedUpdate()
@@ -80,8 +92,8 @@ public class CarMovement : MonoBehaviour
         Motor();
         Brake();
         Steering();
-        ApplyCustomGravity(); // Aplica gravedad extra cuando el carro está volando
-        ApplyDownforce();     // Mantiene el carro pegado y estable en bajadas
+        ApplyCustomGravity(); 
+        ApplyDownforce();     
     }
 
     private void LateUpdate()
@@ -235,18 +247,63 @@ public class CarMovement : MonoBehaviour
         _rb.AddForce(-transform.up * downforce * _rb.velocity.magnitude);
     }
 
-    public void BoostJumpGravity(float temporaryGravityMultiplier, float duration)
+    // --- SISTEMA DE CHECKPOINTS Y RESPAWN ---
+
+    IEnumerator AutoCheckpointRoutine()
     {
-        StartCoroutine(JumpGravityRoutine(temporaryGravityMultiplier, duration));
+        while (true)
+        {
+            yield return new WaitForSeconds(checkpointInterval);
+            CheckIfGroundedForCheckpoint();
+            if (isGroundedForCheckpoint)
+            {
+                SaveCurrentCheckpoint();
+            }
+        }
     }
 
-    private IEnumerator JumpGravityRoutine(float tempMultiplier, float duration)
+    void CheckIfGroundedForCheckpoint()
     {
-        float originalMultiplier = gravityMultiplier;
-        gravityMultiplier = tempMultiplier; 
-        yield return new WaitForSeconds(duration);
-        gravityMultiplier = originalMultiplier; 
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        isGroundedForCheckpoint = Physics.Raycast(origin, Vector3.down, raycastDistance, groundLayer);
     }
+
+    void SaveCurrentCheckpoint()
+    {
+        lastCheckpointPos = transform.position;
+        lastCheckpointRot = transform.rotation;
+    }
+
+    public void RespawnAtLastCheckpoint()
+    {
+        if (_rb != null)
+        {
+            _rb.velocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+        }
+
+        transform.position = lastCheckpointPos;
+        transform.rotation = lastCheckpointRot;
+
+        StartCoroutine(ResetPhysicsNextFrame());
+    }
+
+    IEnumerator ResetPhysicsNextFrame()
+    {
+        if (_rb != null) _rb.isKinematic = true;
+        yield return new WaitForFixedUpdate();
+        if (_rb != null) _rb.isKinematic = false;
+    }
+
+    void CheckFallLimit()
+    {
+        if (transform.position.y < fallLimitY)
+        {
+            RespawnAtLastCheckpoint();
+        }
+    }
+
+    // --- MÉTODOS PARA EL ALGODÓN (Requeridos por ItemAndPlatform) ---
 
     public void EnterCottonZone(float cottonDrag)
     {
@@ -298,22 +355,21 @@ public class CarMovement : MonoBehaviour
         cottonImmunityEndTime = Time.time + immunity;
     }
 
-    private void OnTriggerEnter(Collider other)
+    // --- DETECCIÓN DE OBSTÁCULOS ---
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("CottonZone"))
+        if (collision.collider.CompareTag("Obstacle"))
         {
-            float cottonDragValue = 5.0f; 
-            EnterCottonZone(cottonDragValue);
+            RespawnAtLastCheckpoint();
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("CottonZone"))
+        if (other.CompareTag("Obstacle") || other.CompareTag("DeathZone") || other.CompareTag("Water"))
         {
-            float lingerTime = 0.5f;
-            float immunityTime = 1.0f;
-            ExitCottonZone(lingerTime, immunityTime);
+            RespawnAtLastCheckpoint();
         }
     }
 }
